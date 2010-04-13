@@ -21,17 +21,17 @@ odd (suc zero) = true
 odd (suc (suc n)) = odd n
 
 test-any-even-true : 
-  any even (7 ∷ 22 ∷ 39 ∷ []) ≡ true
+  any even (3 ∷ 6 ∷ 9 ∷ []) ≡ true
 test-any-even-true = refl
 
 test-any-even-false : 
-  any even (7 ∷ 23 ∷ 39 ∷ []) ≡ false
+  any even (3 ∷ 7 ∷ 9 ∷ []) ≡ false
 test-any-even-false = refl
 
 test-any-odd-true : 
-  any odd (8 ∷ 23 ∷ 40 ∷ []) ≡ true
+  any odd (4 ∷ 7 ∷ 10 ∷ []) ≡ true
 test-any-odd-true = refl
 
 test-any-odd-false : 
-  any odd (8 ∷ 22 ∷ 40 ∷ []) ≡ false
+  any odd (4 ∷ 8 ∷ 10 ∷ []) ≡ false
 test-any-odd-false = refl
