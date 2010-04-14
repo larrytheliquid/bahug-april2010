@@ -1,8 +1,8 @@
 !SLIDE
 
-   Another any
+  any other way
 ===================
-Relationship advice
+relationship advice
 -------------------
 
 !SLIDE
@@ -150,3 +150,45 @@ And now for a brief excursion into more fun with relations
 
         ∁U-Empty : {A : Set} → Empty {A} (∁ U)
         ∁U-Empty _ ∁U = ∁U tt
+
+!SLIDE
+        6-Even : 6 ∈ Even
+        6-Even = suc (suc (suc zero))
+
+        test-any-even : Any Even (3 ∷ 6 ∷ 9 ∷ [])
+        test-any-even = there (here 6-Even)
+
+        test-any-6≡ : Any (_≡_ 6) (3 ∷ 6 ∷ 9 ∷ [])
+        test-any-6≡ = there (here refl)
+
+!SLIDE
+        data Σ (A : Set) (B : A → Set) : Set where
+          _,_ : (x : A) (y : B x) → Σ A B
+
+        _×_ : ∀ (A : Set) (B : Set) → Set
+        A × B = Σ A (λ _ → B)
+
+        ∃ : ∀ {A : Set} → (A → Set) → Set
+        ∃ = Σ _
+
+!SLIDE
+        find : ∀ {A : Set} {P : Pred A} {as : List A} → 
+               Any P as → ∃ (λ a → 
+                   Any (_≡_ a) as × a ∈ P)
+        find (here p) = _ , (here refl , p)
+        find (there ps) = Data.Product.map id 
+                          (Data.Product.map there id)
+                          (find ps)
+
+!SLIDE
+        test-any-even : Any Even (3 ∷ 6 ∷ 9 ∷ [])
+        test-any-even = there (here (suc (suc (suc zero))))
+
+        6-found : proj₁ (find test-any-even) ≡ 6
+        6-found = refl
+
+        6-Even : 6 ∈ Even
+        6-Even = proj₂ (proj₂ (find test-any-even))
+
+        test-any-6≡ : Any (_≡_ 6) (3 ∷ 6 ∷ 9 ∷ [])
+        test-any-6≡ = proj₁ (proj₂ (find test-any-even))

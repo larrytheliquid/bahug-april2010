@@ -1,10 +1,12 @@
 module AnyRelational where
+open import Data.Function
 open import Data.Unit
 open import Data.Empty
 open import Data.Bool
 open import Data.Nat
 open import Data.List hiding (any)
 open import Data.Sum
+open import Data.Product
 open import Relation.Nullary
 open import Relation.Binary.PropositionalEquality
 
@@ -105,3 +107,25 @@ Empty P = ∀ a → a ∉ P
 
 ∁U-Empty : {A : Set} → Empty {A} (∁ U)
 ∁U-Empty _ ∁U = ∁U tt
+
+test-any-6≡ : Any ( _≡_ 6) (3 ∷ 6 ∷ 9 ∷ [])
+test-any-6≡ = there (here refl)
+
+find : ∀ {A : Set} {P : Pred A} {as : List A} → 
+       Any P as → ∃ (λ a → Any (_≡_ a) as × a ∈ P)
+find (here p) = _ , (here refl , p)
+find (there ps) = Data.Product.map id 
+                  (Data.Product.map there id)
+                  (find ps)
+
+-- test-any-even : Any Even (3 ∷ 6 ∷ 9 ∷ [])
+-- test-any-even = there (here (suc (suc (suc zero))))
+
+-- 6-found : proj₁ (find test-any-even) ≡ 6
+-- 6-found = refl
+
+-- 6-Even : 6 ∈ Even
+-- 6-Even = proj₂ (proj₂ (find test-any-even))
+
+-- test-any-6≡ : Any (_≡_ 6) (3 ∷ 6 ∷ 9 ∷ [])
+-- test-any-6≡ = proj₁ (proj₂ (find test-any-even))
