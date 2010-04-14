@@ -1,7 +1,10 @@
 module AnyRelational where
+open import Data.Unit
 open import Data.Bool
 open import Data.Nat
 open import Data.List hiding (any)
+open import Data.Sum
+open import Relation.Nullary
 open import Relation.Binary.PropositionalEquality
 
 Pred : Set → Set₁
@@ -10,24 +13,60 @@ Pred A = A → Set
 _∈_ : {A : Set} → A → Pred A → Set
 a ∈ P = P a
 
-data Any {A : Set} (P : Pred A) : List A → Set where
-  here :  ∀ {x xs} → P x      → Any P (x ∷ xs)
-  there : ∀ {x xs} → Any P xs → Any P (x ∷ xs)
-
 data Even : ℕ → Set where
   zero : Even 0
   suc : {n : ℕ} → Even n → Even (suc (suc n))
+
+6-Even : 6 ∈ Even
+6-Even = suc (suc (suc zero))
 
 data Odd : ℕ → Set where
   zero : Odd 1
   suc : {n : ℕ} → Odd n → Odd (suc (suc n))
 
+5-Odd : 5 ∈ Odd
+5-Odd = suc (suc zero)
+
+data Any {A : Set} (P : Pred A) : List A → Set where
+  here :  ∀ {x xs} → x ∈ P    → Any P (x ∷ xs)
+  there : ∀ {x xs} → Any P xs → Any P (x ∷ xs)
+
 test-any-even : Any Even (3 ∷ 6 ∷ 9 ∷ [])
-test-any-even = there (here 6-Even) where
-  6-Even : 6 ∈ Even
-  6-Even = suc (suc (suc zero))
+test-any-even = there (here 6-Even)
 
 test-any-odd : Any Odd (3 ∷ 5 ∷ 10 ∷ [])
-test-any-odd = there (here 5-Odd) where
-  5-Odd : 5 ∈ Odd
-  5-Odd = suc (suc zero)
+test-any-odd = there (here 5-Odd)
+
+U : {A : Set} → Pred A
+U _ = ⊤
+
+42-U : 42 ∈ U
+42-U = tt
+
+true-U : true ∈ U
+true-U = tt
+
+Universal : {A : Set} → Pred A → Set
+Universal P = ∀ a → a ∈ P
+
+U-Universal : {A : Set} → Universal {A} U
+U-Universal _ = tt
+
+C : {A : Set} → Pred A → Pred A
+C P = λ a → ¬ (P a)
+
+_∪_ : {A : Set} → Pred A → Pred A → Pred A
+P₁ ∪ P₂ = λ a → P₁ a ⊎ P₂ a
+
+evenOrOdd : Universal (Even ∪ Odd)
+evenOrOdd 0 = inj₁ zero
+evenOrOdd 1 = inj₂ zero
+evenOrOdd (suc n) with evenOrOdd n
+... | inj₁ p = inj₂ (evenSucOdd p) where
+  evenSucOdd : ∀ {n} → Even n → Odd (suc n)
+  evenSucOdd zero = zero
+  evenSucOdd (suc n) = suc (evenSucOdd n)
+... | inj₂ p = inj₁ (oddSucEven p) where
+  oddSucEven : ∀ {n} → Odd n → Even (suc n)
+  oddSucEven zero = suc zero
+  oddSucEven (suc n) = suc (oddSucEven n)

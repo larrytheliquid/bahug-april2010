@@ -4,21 +4,27 @@ open import Data.Nat
 open import Data.List hiding (any)
 open import Relation.Binary.PropositionalEquality
 
-any : {A : Set} → (A → Bool) → List A → Bool
-any _ [] = false
-any p (x ∷ xs) with p x
-... | true = true
-... | false = any p xs
-
 even : ℕ → Bool
 even zero = true
 even (suc zero) = false
 even (suc (suc n)) = even n
 
+test-6-even : even 6 ≡ true
+test-6-even = refl
+
 odd : ℕ → Bool
 odd zero = false
 odd (suc zero) = true
 odd (suc (suc n)) = odd n
+
+test-5-odd : odd 5 ≡ true
+test-5-odd = refl
+
+any : {A : Set} → (A → Bool) → List A → Bool
+any _ [] = false
+any p (x ∷ xs) with p x
+... | true = true
+... | false = any p xs
 
 test-any-even-true : 
   any even (3 ∷ 6 ∷ 9 ∷ []) ≡ true
