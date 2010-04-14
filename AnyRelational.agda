@@ -8,6 +8,7 @@ open import Data.List hiding (any)
 open import Data.Sum
 open import Data.Product
 open import Relation.Nullary
+open import Relation.Nullary.Decidable renaming (map to dec-map)
 open import Relation.Binary.PropositionalEquality
 
 Pred : Set → Set₁
@@ -129,3 +130,15 @@ find (there ps) = Data.Product.map id
 
 -- test-any-6≡ : Any (_≡_ 6) (3 ∷ 6 ∷ 9 ∷ [])
 -- test-any-6≡ = proj₁ (proj₂ (find test-any-even))
+
+
+tail : ∀ {A x xs} {P : Pred A} → x ∉ P → Any P (x ∷ xs) → Any P xs
+tail ¬p (here  p) = ⊥-elim (¬p p)
+tail ¬p (there ps) = ps
+
+any : {A : Set} {P : Pred A} →
+      (∀ x → Dec (x ∈ P)) → (xs : List A) → Dec (Any P xs)
+any f [] = no λ()
+any f (x ∷ xs) with f x
+any f (x ∷ xs) | yes p = yes (here p)
+any f (x ∷ xs) | no ¬p = dec-map (there , tail ¬p) (any f xs)

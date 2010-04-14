@@ -99,7 +99,7 @@ relationship advice
 
 <div style="display: none;">
 
-And now for a brief excursion into more fun with relations
+And now for a brief intermezzo of more fun with relations
 
 !SLIDE
         Universal : {A : Set} → Pred A → Set
@@ -192,3 +192,28 @@ And now for a brief excursion into more fun with relations
 
         test-any-6≡ : Any (_≡_ 6) (3 ∷ 6 ∷ 9 ∷ [])
         test-any-6≡ = proj₁ (proj₂ (find test-any-even))
+
+!SLIDE
+        data Dec (P : Set) : Set where
+          yes : P   → Dec P
+          no  : ¬ P → Dec P
+
+        _⇔_ : Set → Set → Set
+        P ⇔ Q = (P → Q) × (Q → P)
+
+        dec-map : {P Q : Set} → P ⇔ Q → Dec P → Dec Q
+        dec-map eq (yes p) = yes (proj₁ eq p)
+        dec-map eq (no ¬p) = no (¬p ∘ proj₂ eq)
+
+!SLIDE
+        tail : ∀ {A x xs} {P : Pred A} → 
+               x ∉ P → Any P (x ∷ xs) → Any P xs
+        tail ¬p (here  p) = ⊥-elim (¬p p)
+        tail ¬p (there ps) = ps
+
+        any : {A : Set} {P : Pred A} →
+              (∀ x → Dec (x ∈ P)) → (xs : List A) → Dec (Any P xs)
+        any f [] = no λ()
+        any f (x ∷ xs) with f x
+        any f (x ∷ xs) | yes p = yes (here p)
+        any f (x ∷ xs) | no ¬p = dec-map (there , tail ¬p) (any f xs)
