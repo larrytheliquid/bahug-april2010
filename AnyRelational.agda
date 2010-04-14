@@ -88,6 +88,12 @@ even⇒¬odd (suc e) | f = λ o → f (predOdd o) where
 _∉_ : {A : Set} → A → Pred A → Set
 a ∉ P = ¬ (a ∈ P)
 
+42-¬∅ : 42 ∉ ∅
+42-¬∅ ()
+
+true-¬∅ : true ∉ ∅
+true-¬∅ ()
+
 Empty : {A : Set} → Pred A → Set
 Empty P = ∀ a → a ∉ P
 

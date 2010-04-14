@@ -88,7 +88,65 @@ Relationship advice
         test-any-odd = there (here 5-Odd)
 
 !SLIDE
+        U : {A : Set} → Pred A
+        U _ = ⊤
+
+        42-U : 42 ∈ U
+        42-U = tt
+
+        true-U : true ∈ U
+        true-U = tt
 
 <div style="display: none;">
 
 And now for a brief excursion into more fun with relations
+
+!SLIDE
+        Universal : {A : Set} → Pred A → Set
+        Universal P = ∀ a → a ∈ P
+
+        U-Universal : {A : Set} → Universal {A} U
+        U-Universal _ = tt
+
+!SLIDE
+        _∪_ : {A : Set} → Pred A → Pred A → Pred A
+        P ∪ Q = λ a → P a ⊎ Q a
+
+        evenOrOdd : Universal (Even ∪ Odd)
+        evenOrOdd 0 = inj₁ zero
+        evenOrOdd 1 = inj₂ zero
+        evenOrOdd (suc n) with evenOrOdd n
+        ... | inj₁ p = inj₂ (evenSucOdd p) where
+          evenSucOdd : ∀ {n} → Even n → Odd (suc n)
+          evenSucOdd zero = zero
+          evenSucOdd (suc n) = suc (evenSucOdd n)
+        ... | inj₂ p = inj₁ (oddSucEven p) where
+          oddSucEven : ∀ {n} → Odd n → Even (suc n)
+          oddSucEven zero = suc zero
+          oddSucEven (suc n) = suc (oddSucEven n)
+
+!SLIDE
+        ∅ : {A : Set} → Pred A
+        ∅ _ = ⊥
+
+        _∉_ : {A : Set} → A → Pred A → Set
+        a ∉ P = ¬ (a ∈ P)
+
+        42-¬∅ : 42 ∉ ∅
+        42-¬∅ ()
+
+        true-¬∅ : true ∉ ∅
+        true-¬∅ ()
+
+!SLIDE
+        Empty : {A : Set} → Pred A → Set
+        Empty P = ∀ a → a ∉ P
+
+        ∅-Empty : {A : Set} → Empty {A} ∅
+        ∅-Empty _ ()
+
+        ∁∅-Universal : {A : Set} → Universal {A} (∁ ∅)
+        ∁∅-Universal _ ()
+
+        ∁U-Empty : {A : Set} → Empty {A} (∁ U)
+        ∁U-Empty _ ∁U = ∁U tt
