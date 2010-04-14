@@ -1,5 +1,6 @@
 module AnyRelational where
 open import Data.Unit
+open import Data.Empty
 open import Data.Bool
 open import Data.Nat
 open import Data.List hiding (any)
@@ -52,11 +53,8 @@ Universal P = ∀ a → a ∈ P
 U-Universal : {A : Set} → Universal {A} U
 U-Universal _ = tt
 
-C : {A : Set} → Pred A → Pred A
-C P = λ a → ¬ (P a)
-
 _∪_ : {A : Set} → Pred A → Pred A → Pred A
-P₁ ∪ P₂ = λ a → P₁ a ⊎ P₂ a
+P ∪ Q = λ a → P a ⊎ Q a
 
 evenOrOdd : Universal (Even ∪ Odd)
 evenOrOdd 0 = inj₁ zero
@@ -70,3 +68,34 @@ evenOrOdd (suc n) with evenOrOdd n
   oddSucEven : ∀ {n} → Odd n → Even (suc n)
   oddSucEven zero = suc zero
   oddSucEven (suc n) = suc (oddSucEven n)
+
+∁ : {A : Set} → Pred A → Pred A
+∁ P = λ a → ¬ (P a)
+
+_⇒_ : {A : Set} → Pred A → Pred A → Set
+P ⇒ Q = ∀ {a} → P a → Q a
+
+even⇒¬odd : Even ⇒ ∁ Odd
+even⇒¬odd zero = λ()
+even⇒¬odd (suc e) with even⇒¬odd e
+even⇒¬odd (suc e) | f = λ o → f (predOdd o) where
+  predOdd : ∀ {n} → Odd (suc (suc n)) → Odd n
+  predOdd (suc n) = n
+
+∅ : {A : Set} → Pred A
+∅ _ = ⊥
+
+_∉_ : {A : Set} → A → Pred A → Set
+a ∉ P = ¬ (a ∈ P)
+
+Empty : {A : Set} → Pred A → Set
+Empty P = ∀ a → a ∉ P
+
+∅-Empty : {A : Set} → Empty {A} ∅
+∅-Empty _ ()
+
+∁∅-Universal : {A : Set} → Universal {A} (∁ ∅)
+∁∅-Universal _ ()
+
+∁U-Empty : {A : Set} → Empty {A} (∁ U)
+∁U-Empty _ ∁U = ∁U tt
