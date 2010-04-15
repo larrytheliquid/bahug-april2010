@@ -258,3 +258,13 @@ And now for a brief intermezzo of more fun with relations
         postulate
           ¬even¬Consecutive : ∀ {n} →
                               n ∉ Even → suc n ∈ Even
+
+!SLIDE
+        test-any-even : Any Even (3 ∷ 6 ∷ 9 ∷ [])
+        test-any-even = there (here (suc (suc (suc zero))))
+
+        dec-any-even : Dec (Any Even (3 ∷ 6 ∷ 9 ∷ []))
+        dec-any-even = any Dec-Even (3 ∷ 6 ∷ 9 ∷ [])
+
+!SLIDE
+# Fin #

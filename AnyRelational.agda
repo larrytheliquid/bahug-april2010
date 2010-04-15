@@ -161,3 +161,6 @@ Dec-Even (suc zero) = no λ()
 Dec-Even (suc n) with Dec-Even n
 ... | yes p = no (even¬Consecutive p)
 ... | no ¬p = yes (¬even¬Consecutive ¬p)
+
+dec-any-even : Dec (Any Even (3 ∷ 6 ∷ 9 ∷ []))
+dec-any-even = any Dec-Even (3 ∷ 6 ∷ 9 ∷ [])
