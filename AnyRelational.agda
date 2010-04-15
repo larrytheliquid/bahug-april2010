@@ -78,12 +78,13 @@ evenOrOdd (suc n) with evenOrOdd n
 _⇒_ : {A : Set} → Pred A → Pred A → Set
 P ⇒ Q = ∀ {a} → P a → Q a
 
+predOdd : ∀ {n} → Odd (suc (suc n)) → Odd n
+predOdd (suc n) = n
+
 even⇒¬odd : Even ⇒ ∁ Odd
 even⇒¬odd zero = λ()
 even⇒¬odd (suc e) with even⇒¬odd e
-even⇒¬odd (suc e) | f = λ o → f (predOdd o) where
-  predOdd : ∀ {n} → Odd (suc (suc n)) → Odd n
-  predOdd (suc n) = n
+even⇒¬odd (suc e) | f = λ o → f (predOdd o)
 
 ∅ : {A : Set} → Pred A
 ∅ _ = ⊥
@@ -142,3 +143,21 @@ any f [] = no λ()
 any f (x ∷ xs) with f x
 any f (x ∷ xs) | yes p = yes (here p)
 any f (x ∷ xs) | no ¬p = dec-map (there , tail ¬p) (any f xs)
+
+predEven : ∀ {n} → Even (suc (suc n)) → Even n
+predEven (suc n) = n
+
+even¬Consecutive : ∀ {n} → n ∈ Even → suc n ∉ Even
+even¬Consecutive zero = λ ()
+even¬Consecutive (suc n) with even¬Consecutive n
+... | ¬p = λ e → ¬p (predEven e)
+
+postulate
+  ¬even¬Consecutive : ∀ {n} → n ∉ Even → suc n ∈ Even
+
+Dec-Even : ∀ n → Dec (n ∈ Even)
+Dec-Even zero = yes zero
+Dec-Even (suc zero) = no λ()
+Dec-Even (suc n) with Dec-Even n
+... | yes p = no (even¬Consecutive p)
+... | no ¬p = yes (¬even¬Consecutive ¬p)
